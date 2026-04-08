@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BazaarDeal — Your Neighbourhood Stores, Now on Your Phone</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏪</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0A0A0A;
+      --bg-2:     #111111;
+      --bg-3:     #161616;
+      --bg-4:     #1d1d1d;
+      --orange:        #FF6600;
+      --orange-light:  #FF8533;
+      --orange-dark:   #CC5200;
+      --og10:  rgba(255,102,0,0.10);
+      --og15:  rgba(255,102,0,0.15);
+      --og20:  rgba(255,102,0,0.20);
+      --og30:  rgba(255,102,0,0.30);
+      --w90:  rgba(255,255,255,0.90);
+      --w70:  rgba(255,255,255,0.70);
+      --w55:  rgba(255,255,255,0.55);
+      --w40:  rgba(255,255,255,0.40);
+      --w20:  rgba(255,255,255,0.20);
+      --w10:  rgba(255,255,255,0.10);
+      --w06:  rgba(255,255,255,0.06);
+      --w04:  rgba(255,255,255,0.04);
+      --border:        rgba(255,255,255,0.08);
+      --border-orange: rgba(255,102,0,0.28);
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --r:    16px;
+      --r-sm: 10px;
+      --r-lg: 24px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE ─────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.5;
+    }
+
+    /* ─── CURSOR ────────────────────────────────── */
+    .cursor {
+      width: 16px; height: 16px;
+      background: rgba(255,102,0,0.7);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: screen;
+      transform: translate(-50%,-50%);
+      transition: transform 0.08s linear, width 0.2s, height 0.2s;
+    }
+    .cursor-ring {
+      width: 38px; height: 38px;
+      border: 1.5px solid rgba(255,102,0,0.35);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), width 0.3s, height 0.3s;
+    }
+    @media (hover: none) { .cursor, .cursor-ring { display: none; } }
+
+    /* ─── NAVBAR ────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: 68px;
+      display: flex; align-items: center;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      gap: 2rem;
+      transition: background 0.4s, border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(10,10,10,0.82);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-bottom-color: var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 1.25rem;
+      color: #fff; text-decoration: none;
+      display: flex; align-items: center; gap: 9px;
+      flex-shrink: 0;
+    }
+    .nav-logo-icon {
+      width: 34px; height: 34px;
+      background: var(--orange);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+    .nav-logo em { color: var(--orange); font-style: normal; }
+    .nav-links {
+      display: flex; gap: 2rem;
+      list-style: none;
+      margin: 0 auto;
+    }
+    .nav-links a {
+      color: var(--w55); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      flex-shrink: 0;
+      background: var(--orange);
+      color: #fff; text-decoration: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 9px;
+      font-size: 0.88rem; font-weight: 600;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .nav-cta:hover {
+      background: var(--orange-light);
+      box-shadow: 0 0 22px rgba(255,102,0,0.4);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none;
+      padding: 4px; margin-left: auto;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: #fff; border-radius: 2px;
+      transition: all 0.3s;
+    }
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,10,0.97);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: 2rem; font-weight: 700;
+      color: #fff; text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--orange); }
+    .mobile-close {
+      position: absolute; top: 1.5rem; right: 2rem;
+      background: none; border: none; color: var(--w55);
+      font-size: 1.8rem; cursor: pointer;
+    }
+
+    /* ─── HERO ──────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 110px clamp(1.5rem,5vw,4rem) 80px;
+      position: relative; overflow: hidden;
+    }
+    /* BG grid */
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--w04) 1px, transparent 1px),
+        linear-gradient(90deg, var(--w04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 65% 65% at center, #000 20%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 65% 65% at center, #000 20%, transparent 80%);
+    }
+    /* Glowing orb */
+    .hero-orb {
+      position: absolute; top: 48%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(255,102,0,0.14) 0%, rgba(255,102,0,0.04) 50%, transparent 70%);
+      border-radius: 50%;
+      animation: orb-pulse 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes orb-pulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+      50%      { transform: translate(-50%,-50%) scale(1.18); opacity: 1;   }
+    }
+    .hero-inner {
+      max-width: 1280px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+    /* Animated badge */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--og10);
+      border: 1px solid rgba(255,102,0,0.22);
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--orange-light);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 0.15s;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      background: var(--orange); border-radius: 50%;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
+
+    /* Word-by-word headline */
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.2vw, 5.4rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-headline .word {
+      display: inline-block;
+      opacity: 0; filter: blur(10px);
+      transform: translateY(22px);
+      animation: word-in 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .hero-headline .accent { color: var(--orange); }
+    @keyframes word-in {
+      to { opacity:1; filter:blur(0); transform:translateY(0); }
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+      color: var(--w70);
+      max-width: 500px; line-height: 1.75;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 1.5s;
+    }
+    .hero-ctas {
+      display: flex; flex-direction: column; gap: 1.2rem;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 1.8s;
+    }
+    .store-badges { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .store-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; color: #000;
+      padding: 11px 20px; border-radius: 12px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: var(--font-body);
+    }
+    .store-badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 32px rgba(255,255,255,0.14);
+    }
+    .store-badge-icon { font-size: 1.5rem; line-height: 1; }
+    .store-badge-text { display: flex; flex-direction: column; }
+    .store-badge-text small { font-size: 0.62rem; color: #666; line-height: 1; }
+    .store-badge-text strong { font-size: 0.95rem; line-height: 1.3; }
+    .sec-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--w55); text-decoration: none;
+      font-size: 0.92rem; font-weight: 500;
+      width: fit-content;
+      transition: color 0.2s, gap 0.2s;
+    }
+    .sec-cta:hover { color: var(--orange); gap: 12px; }
+    .sec-cta-arrow { display: inline-block; transition: transform 0.2s; }
+    .sec-cta:hover .sec-cta-arrow { transform: translateX(4px); }
+
+    /* Phone mockup */
+    .hero-phone-wrap {
+      display: flex; justify-content: center;
+      perspective: 1200px;
+      opacity: 0;
+      animation: fade-up 0.9s ease forwards 0.7s;
+    }
+    .hero-phone {
+      width: 280px; height: 574px;
+      background: linear-gradient(145deg, #1f1f1f 0%, #0e0e0e 100%);
+      border-radius: 42px;
+      border: 1.5px solid rgba(255,255,255,0.13);
+      position: relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.04),
+        0 60px 140px rgba(0,0,0,0.9),
+        0 0 70px rgba(255,102,0,0.09);
+      transform-style: preserve-3d;
+      transition: transform 0.12s ease;
+      will-change: transform;
+      cursor: default;
+    }
+    /* Notch */
+    .hero-phone::before {
+      content: '';
+      position: absolute; top: 14px; left: 50%;
+      transform: translateX(-50%);
+      width: 110px; height: 28px;
+      background: #0e0e0e;
+      border-radius: 20px; z-index: 10;
+    }
+    /* Side button */
+    .hero-phone::after {
+      content: '';
+      position: absolute; top: 140px; right: -3px;
+      width: 4px; height: 60px;
+      background: #222; border-radius: 0 2px 2px 0;
+    }
+    /* Phone glow */
+    .phone-glow-base {
+      position: absolute; bottom: -50px; left: 50%;
+      transform: translateX(-50%);
+      width: 220px; height: 60px;
+      background: radial-gradient(ellipse, rgba(255,102,0,0.22) 0%, transparent 70%);
+      pointer-events: none;
+      filter: blur(8px);
+    }
+    .phone-screen {
+      position: absolute;
+      top: 10px; left: 10px; right: 10px; bottom: 10px;
+      border-radius: 33px;
+      background: #0d1117;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    /* Phone UI inside */
+    .ps-statusbar {
+      height: 42px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 18px 7px;
+      font-size: 0.58rem; color: var(--w70);
+      flex-shrink: 0;
+    }
+    .ps-header {
+      background: #111;
+      padding: 9px 14px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      flex-shrink: 0;
+    }
+    .ps-header-logo {
+      font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800;
+      color: var(--orange);
+    }
+    .ps-location {
+      display: flex; align-items: center; gap: 3px;
+      font-size: 0.58rem; color: var(--w40);
+    }
+    /* Mini map */
+    .ps-map {
+      height: 100px;
+      background:
+        linear-gradient(160deg, #0f1a0f 0%, #111c11 50%, #0d180d 100%);
+      position: relative; overflow: hidden; flex-shrink: 0;
+    }
+    .ps-map::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    /* Store pins */
+    .ps-pin {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 8px rgba(255,102,0,0.8);
+    }
+    .ps-pin-1 { top: 45px; left: 50%; transform: translateX(-50%); }
+    .ps-pin-2 { top: 28px; left: 30%; width: 7px; height: 7px; opacity: 0.6; }
+    .ps-pin-3 { top: 58px; left: 68%; width: 7px; height: 7px; opacity: 0.5; }
+    .ps-pin-4 { top: 20px; left: 72%; width: 6px; height: 6px; opacity: 0.4; }
+    .ps-you {
+      position: absolute; bottom: 12px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.48rem; color: #4ade80; font-weight: 600;
+      background: rgba(0,0,0,0.6); padding: 2px 5px; border-radius: 3px;
+    }
+    .ps-deals-label {
+      padding: 8px 14px 5px;
+      font-size: 0.67rem; font-weight: 600;
+      color: var(--w70); flex-shrink: 0;
+    }
+    /* Deal cards */
+    .ps-deal {
+      margin: 0 10px 7px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 9px; padding: 9px;
+      display: flex; gap: 8px; align-items: center; flex-shrink: 0;
+    }
+    .ps-deal-icon {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .ps-deal-info { flex: 1; min-width: 0; }
+    .ps-deal-name { font-size: 0.6rem; font-weight: 600; color: var(--w90); }
+    .ps-deal-sub  { font-size: 0.52rem; color: var(--w40); margin-top: 1px; }
+    .ps-badge {
+      background: var(--og15);
+      border: 1px solid var(--og30);
+      color: var(--orange-light);
+      font-size: 0.5rem; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+    }
+    /* Bottom tabs */
+    .ps-tabs {
+      margin-top: auto;
+      height: 50px;
+      background: #111;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: space-around;
+      font-size: 0.52rem; color: var(--w40);
+      flex-shrink: 0;
+    }
+    .ps-tab-icon { font-size: 0.9rem; display: block; margin: 0 auto 2px; }
+    .ps-tab-active { color: var(--orange); }
+    .ps-home-bar {
+      height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ps-home-bar span {
+      width: 80px; height: 4px;
+      background: rgba(255,255,255,0.2); border-radius: 2px;
+    }
+
+    @keyframes fade-up {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ─── MARQUEE / TICKER ──────────────────────── */
+    .ticker-strip {
+      background: var(--orange);
+      padding: 13px 0; overflow: hidden; white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-flex;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-item {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 0.88rem;
+      color: #fff; padding: 0 2.4rem;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .ticker-sep {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.4rem;
+      vertical-align: middle;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── SHARED SECTION STYLES ─────────────────── */
+    section { padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 4rem); }
+    .s-inner { max-width: 1280px; margin: 0 auto; }
+
+    .s-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--orange); margin-bottom: 1.1rem;
+    }
+    .s-label::before {
+      content: ''; display: inline-block;
+      width: 18px; height: 1.5px; background: var(--orange);
+    }
+    .s-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+      font-weight: 800; line-height: 1.08;
+      letter-spacing: -0.022em;
+    }
+    .s-sub {
+      font-size: 1.05rem; color: var(--w55);
+      max-width: 640px; line-height: 1.75; margin-top: 1rem;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+    .reveal-d4 { transition-delay: 0.32s; }
+    .reveal-d5 { transition-delay: 0.40s; }
+
+    /* ─── PROBLEM SECTION ──────────────────────── */
+    .problem-section { background: var(--bg-2); }
+
+    .problem-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 2.8vw, 2.4rem);
+      font-weight: 700; line-height: 1.3;
+      max-width: 820px; margin: 1.4rem 0 1rem;
+      color: var(--w90);
+    }
+    .problem-quote .hl { color: var(--orange); }
+
+    .problem-desc {
+      font-size: 1.04rem; color: var(--w55);
+      max-width: 740px; line-height: 1.8; margin-bottom: 3rem;
+    }
+
+    .prob-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.4rem;
+    }
+    .prob-card {
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.75rem 1.6rem;
+      position: relative; overflow: hidden;
+      cursor: default;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    /* glowing gradient border on hover */
+    .prob-card::before {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: var(--r);
+      background: linear-gradient(135deg,
+        rgba(200,0,0,0.5) 0%,
+        rgba(255,102,0,0.45) 100%);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .prob-card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 24px 60px rgba(255,50,0,0.1);
+    }
+    .prob-card:hover::before { opacity: 1; }
+    .prob-icon {
+      width: 46px; height: 46px;
+      background: var(--og10); border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; margin-bottom: 1.2rem;
+    }
+    .prob-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700;
+      margin-bottom: 0.55rem;
+    }
+    .prob-card p { font-size: 0.875rem; color: var(--w55); line-height: 1.65; }
+
+    /* ─── SOLUTION SECTION ──────────────────────── */
+    .solution-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+      margin-top: 3rem;
+    }
+    .sol-visual {
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 2.2rem;
+      position: relative; overflow: hidden;
+    }
+    .sol-visual::after {
+      content: '';
+      position: absolute; bottom: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, var(--og10), transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .flow-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 11px; padding: 1rem;
+    }
+    .flow-icon {
+      width: 38px; height: 38px;
+      background: var(--og10); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .flow-title { font-size: 0.9rem; font-weight: 600; color: var(--w90); }
+    .flow-desc  { font-size: 0.75rem; color: var(--w40); margin-top: 2px; }
+    .flow-connector {
+      width: 2px; height: 20px;
+      background: linear-gradient(var(--og30), transparent);
+      margin-left: 28px;
+    }
+    .sol-tags {
+      display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 2rem;
+    }
+    .sol-tag {
+      background: var(--og10);
+      border: 1px solid var(--og20);
+      color: var(--orange-light);
+      padding: 5px 13px; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 500;
+    }
+
+    /* ─── HOW IT WORKS ──────────────────────────── */
+    .how-group { margin-bottom: 5rem; }
+    .how-group:last-child { margin-bottom: 0; }
+    .how-label-customer { color: #4ade80; }
+    .how-label-customer::before { background: #4ade80; }
+    .how-label-shop { color: var(--orange); }
+
+    .steps-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; position: relative; margin-top: 3rem;
+    }
+    /* Connecting line */
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: calc(50% / 3 + 24px);
+      right: calc(50% / 3 + 24px);
+      height: 2px;
+      background: linear-gradient(to right,
+        var(--orange) var(--lp, 0%), var(--border) var(--lp, 0%));
+      z-index: 0;
+      transition: background 0.6s;
+    }
+    .step-card {
+      padding: 0 1.5rem 1.5rem;
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--bg-3);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--w40); margin-bottom: 1.5rem;
+      position: relative; z-index: 1;
+      transition: all 0.4s ease;
+    }
+    .step-card.active .step-num {
+      background: var(--orange); border-color: var(--orange); color: #fff;
+      box-shadow: 0 0 22px var(--og30);
+      animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes bounce-in {
+      0%   { transform: scale(0.7); }
+      60%  { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    .step-ico {
+      width: 42px; height: 42px;
+      background: var(--og10); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; margin-bottom: 1rem;
+    }
+    .step-card.active .step-ico {
+      background: var(--og15);
+      animation: ico-pop 0.4s ease;
+    }
+    @keyframes ico-pop {
+      0%   { transform: rotate(-10deg) scale(0.9); }
+      60%  { transform: rotate(4deg) scale(1.06); }
+      100% { transform: rotate(0) scale(1); }
+    }
+    .step-card h3 {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 700; margin-bottom: 0.45rem;
+    }
+    .step-card p { font-size: 0.855rem; color: var(--w55); line-height: 1.6; }
+    .voice-callout {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--og10);
+      border: 1px solid var(--og20);
+      color: var(--orange-light);
+      padding: 10px 16px; border-radius: 11px;
+      font-size: 0.82rem; font-weight: 500;
+      margin-top: 2.5rem;
+    }
+
+    /* ─── CATEGORIES ────────────────────────────── */
+    .cat-section { background: var(--bg-2); }
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem; margin-top: 3rem;
+    }
+    .cat-card {
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.8rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.9rem;
+      cursor: default;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.3s, border-color 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .cat-card::after {
+      content: '';
+      position: absolute; bottom: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, var(--og06,rgba(255,102,0,0.06)), transparent 70%);
+      border-radius: 50%;
+      transition: transform 0.4s;
+    }
+    .cat-card:hover {
+      transform: translateY(-7px) scale(1.015);
+      box-shadow: 0 22px 52px rgba(255,102,0,0.07);
+      border-color: rgba(255,102,0,0.18);
+    }
+    .cat-card:hover::after { transform: scale(1.6); }
+    .cat-icon {
+      width: 54px; height: 54px;
+      background: var(--og10); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.45rem;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  background 0.3s, box-shadow 0.3s;
+    }
+    .cat-card:hover .cat-icon {
+      transform: scale(1.15);
+      background: var(--og15);
+      box-shadow: 0 0 22px var(--og20);
+    }
+    .cat-name {
+      font-family: var(--font-display);
+      font-size: 0.98rem; font-weight: 700;
+    }
+    .cat-status { font-size: 0.78rem; color: var(--w40); }
+    .cat-status em { color: #4ade80; font-style: normal; font-weight: 600; }
+
+    /* ─── VALUE PROPS — BENTO ───────────────────── */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.2rem; margin-top: 3rem;
+    }
+    .bc { /* bento card */
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .bc:hover {
+      border-color: rgba(255,102,0,0.18);
+      box-shadow: 0 20px 50px rgba(255,102,0,0.06);
+    }
+    .bc-1 { grid-column: span 7; }
+    .bc-2 { grid-column: span 5; }
+    .bc-3 { grid-column: span 5; }
+    .bc-4 { grid-column: span 7; }
+    .bc-icon {
+      width: 50px; height: 50px;
+      background: var(--og10); border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin-bottom: 1.5rem;
+    }
+    .bc h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem; font-weight: 800;
+      margin-bottom: 0.6rem; line-height: 1.2;
+    }
+    .bc p { font-size: 0.875rem; color: var(--w55); line-height: 1.65; }
+    .bc-big {
+      font-family: var(--font-display);
+      font-size: 4rem; font-weight: 800;
+      color: var(--orange); line-height: 1; margin-bottom: 0.4rem;
+    }
+    .bc-glow {
+      position: absolute; bottom: -40px; right: -40px;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, var(--og10), transparent 70%);
+      border-radius: 50%;
+    }
+    /* Tag pill inside bento card */
+    .bc-tag {
+      display: inline-block;
+      background: var(--og10); border: 1px solid var(--og20);
+      color: var(--orange-light);
+      font-size: 0.72rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 100px;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ─── SHOPKEEPER SECTION ────────────────────── */
+    .sk-section { background: var(--bg-2); }
+    .sk-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+    .sk-features { display: flex; flex-direction: column; gap: 1rem; margin: 2rem 0; }
+    .sk-feat {
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .sk-check {
+      width: 22px; height: 22px;
+      background: var(--og10); border: 1px solid var(--og30);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; color: var(--orange); flex-shrink: 0; margin-top: 2px;
+    }
+    .sk-feat-text { font-size: 0.94rem; color: var(--w70); line-height: 1.6; }
+    .pricing-box {
+      background: var(--og10); border: 1px solid var(--og20);
+      border-radius: 14px; padding: 1.4rem;
+    }
+    .pricing-free { font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--orange); }
+    .pricing-then { font-size: 0.84rem; color: var(--w40); margin-top: 4px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange); color: #fff;
+      padding: 0.9rem 1.8rem; border-radius: 10px;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none;
+      margin-top: 1.5rem;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--orange-light);
+      box-shadow: 0 10px 32px rgba(255,102,0,0.38);
+      transform: translateY(-2px);
+    }
+
+    /* Shopkeeper phone mockup */
+    .sk-phone-wrap {
+      display: flex; justify-content: center;
+    }
+    .sk-phone {
+      width: 256px; height: 524px;
+      background: linear-gradient(145deg, #1f1f1f, #0e0e0e);
+      border-radius: 38px;
+      border: 1.5px solid rgba(255,255,255,0.11);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 50px var(--og10);
+      transform: rotate(-4deg);
+      animation: float-phone 3.5s ease-in-out infinite;
+      overflow: hidden; position: relative;
+    }
+    @keyframes float-phone {
+      0%,100% { transform: rotate(-4deg) translateY(0);    }
+      50%      { transform: rotate(-4deg) translateY(-14px); }
+    }
+    .sk-screen {
+      position: absolute; inset: 10px;
+      border-radius: 30px;
+      background: #0d1117;
+      overflow: hidden;
+    }
+    .sk-app-header {
+      background: #111; padding: 11px 14px 9px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .sk-app-title { font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; color: var(--w90); }
+    .sk-app-sub   { font-size: 0.58rem; color: var(--w40); margin-top: 1px; }
+    .sk-stats-g {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 7px; padding: 9px;
+    }
+    .sk-stat-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px; padding: 9px;
+    }
+    .sk-stat-v {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 800;
+      color: var(--orange);
+    }
+    .sk-stat-l { font-size: 0.52rem; color: var(--w40); margin-top: 2px; }
+    .sk-sec-title {
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--w40); text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 10px 6px;
+    }
+    .sk-prod {
+      margin: 0 8px 6px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px; padding: 8px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .sk-prod-ico { font-size: 0.85rem; }
+    .sk-prod-name  { font-size: 0.58rem; font-weight: 600; color: var(--w90); }
+    .sk-prod-price { font-size: 0.52rem; color: var(--w40); }
+    .sk-prod-disc {
+      margin-left: auto;
+      background: var(--og15); color: var(--orange);
+      font-size: 0.48rem; font-weight: 700;
+      padding: 2px 5px; border-radius: 4px;
+    }
+
+    /* ─── STATS ─────────────────────────────────── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .stat-box {
+      text-align: center; padding: 2.2rem 1rem;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r); position: relative; overflow: hidden;
+    }
+    .stat-box::after {
+      content: '';
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 55%; height: 2px;
+      background: var(--orange); border-radius: 2px;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800; color: var(--orange);
+      line-height: 1; margin-bottom: 0.5rem;
+    }
+    .stat-lbl { font-size: 0.855rem; color: var(--w55); }
+
+    /* ─── MARKET SECTION ────────────────────────── */
+    .market-section { background: var(--bg-2); }
+    .market-center {
+      text-align: center; max-width: 860px; margin: 0 auto;
+    }
+    .market-num {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 14vw, 10rem);
+      font-weight: 800; line-height: 1;
+      background: linear-gradient(135deg, #fff 20%, var(--orange) 100%);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; margin: 1.5rem 0;
+    }
+    .market-desc {
+      font-size: 1.1rem; color: var(--w55); line-height: 1.75;
+    }
+    .market-row {
+      display: flex; justify-content: center;
+      gap: 4rem; margin-top: 3rem; flex-wrap: wrap;
+    }
+    .market-stat { text-align: center; }
+    .market-stat-v {
+      font-family: var(--font-display);
+      font-size: 1.9rem; font-weight: 800; color: #fff;
+    }
+    .market-stat-l { font-size: 0.82rem; color: var(--w40); margin-top: 4px; }
+
+    /* ─── FINAL CTA ─────────────────────────────── */
+    .cta-section {
+      background: linear-gradient(160deg, #0A0A0A 0%, #180700 55%, #1f0d00 100%);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-orb {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(255,102,0,0.12), transparent 65%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 5.2rem);
+      font-weight: 800; letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #ffffff 30%, #ff9900 100%);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; margin-bottom: 1rem;
+      animation: shimmer 3.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { filter: brightness(1); }
+      50%      { filter: brightness(1.1); }
+    }
+    .cta-sub { font-size: 1.05rem; color: var(--w55); margin-bottom: 3rem; }
+    .cta-cards {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; max-width: 820px; margin: 0 auto;
+    }
+    .cta-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--w10);
+      border-radius: 20px; padding: 2rem; text-align: left;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .cta-card:hover {
+      border-color: var(--border-orange);
+      box-shadow: 0 0 50px rgba(255,102,0,0.08);
+    }
+    .cta-card-tag {
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--w40); margin-bottom: 0.9rem;
+    }
+    .cta-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.18rem; font-weight: 700; margin-bottom: 0.7rem;
+    }
+    .cta-card p { font-size: 0.86rem; color: var(--w55); margin-bottom: 1.5rem; line-height: 1.6; }
+    .btn-glow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange); color: #fff;
+      padding: 0.75rem 1.5rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.9rem; text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .btn-glow:hover {
+      background: var(--orange-light);
+      box-shadow: 0 0 0 4px rgba(255,102,0,0.18), 0 10px 28px rgba(255,102,0,0.38);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(255,102,0,0.35);
+      color: var(--orange);
+      padding: 0.75rem 1.5rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.9rem; text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .btn-ghost:hover {
+      background: var(--og10);
+      border-color: var(--orange);
+      box-shadow: 0 0 22px rgba(255,102,0,0.12);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      background: #060606;
+      border-top: 1px solid var(--border);
+      padding: 2.5rem clamp(1.5rem,5vw,4rem);
+    }
+    .footer-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 800; color: #fff;
+    }
+    .footer-brand em { color: var(--orange); font-style: normal; }
+    .footer-tagline { font-size: 0.78rem; color: var(--w40); margin-top: 3px; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      font-size: 0.8rem; color: var(--w40); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--orange); }
+    .footer-copy { font-size: 0.76rem; color: var(--w20); }
+
+    /* ─── RESPONSIVE ────────────────────────────── */
+    @media (max-width: 960px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-badge { margin-left: auto; margin-right: auto; }
+      .hero-sub   { margin-left: auto; margin-right: auto; }
+      .hero-ctas  { align-items: center; }
+      .store-badges { justify-content: center; }
+      .hero-phone-wrap { margin-top: 2.5rem; }
+
+      .solution-grid, .sk-grid { grid-template-columns: 1fr; }
+      .sk-phone-wrap { order: -1; }
+
+      .steps-row { grid-template-columns: 1fr; gap: 2rem; }
+      .steps-row::before { display: none; }
+
+      .cat-grid   { grid-template-columns: repeat(2, 1fr); }
+      .bento-grid { grid-template-columns: 1fr; }
+      .bc-1,.bc-2,.bc-3,.bc-4 { grid-column: span 1; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta-cards  { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 540px) {
+      .cat-grid   { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-phone { width: 240px; height: 490px; }
+      .market-row { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="#problem" onclick="closeMobile()">Problem</a>
+    <a href="#solution" onclick="closeMobile()">Solution</a>
+    <a href="#how" onclick="closeMobile()">How It Works</a>
+    <a href="#shopkeepers" onclick="closeMobile()">Shopkeepers</a>
+    <a href="#download" style="color:var(--orange)" onclick="closeMobile()">Download App</a>
+  </div>
+
+  <!-- ─── NAVBAR ──────────────────────────────── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">🏪</span>
+      Bazaar<em>Deal</em>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#categories">Categories</a></li>
+      <li><a href="#shopkeepers">Shopkeepers</a></li>
+    </ul>
+    <a href="#download" class="nav-cta">Download App</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ─── HERO ────────────────────────────────── -->
+  <section class="hero" id="download">
+    <div class="hero-grid"></div>
+    <div class="hero-orb"></div>
+
+    <div class="hero-inner">
+      <!-- Left content -->
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          Now Live · Hyperlocal O2O Commerce
+        </div>
+
+        <h1 class="hero-headline" id="heroHeadline">
+          Your Neighbourhood Stores.&nbsp;<span class="accent">Now on Your Phone.</span>
+        </h1>
+
+        <p class="hero-sub">
+          Discover real-time deals, discounts &amp; inventory from local shops within minutes of you.
+          Browse online. Buy offline. <em>Instantly.</em>
+        </p>
+
+        <div class="hero-ctas">
+          <div class="store-badges">
+            <a href="#" class="store-badge">
+              <span class="store-badge-icon">▶</span>
+              <span class="store-badge-text">
+                <small>Get it on</small>
+                <strong>Google Play</strong>
+              </span>
+            </a>
+            <a href="#" class="store-badge">
+              <span class="store-badge-icon"></span>
+              <span class="store-badge-text">
+                <small>Download on the</small>
+                <strong>App Store</strong>
+              </span>
+            </a>
+          </div>
+          <a href="#shopkeepers" class="sec-cta">
+            Register Your Shop <span class="sec-cta-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Phone mockup -->
+      <div class="hero-phone-wrap">
+        <div class="hero-phone" id="heroPhone">
+          <div class="phone-glow-base"></div>
+          <div class="phone-screen">
+            <!-- Status bar -->
+            <div class="ps-statusbar">
+              <span>9:41</span>
+              <span>●●● ▮▮▮</span>
+            </div>
+            <!-- App header -->
+            <div class="ps-header">
+              <span class="ps-header-logo">BazaarDeal</span>
+              <span class="ps-location">📍 Connaught Place</span>
+            </div>
+            <!-- Mini map -->
+            <div class="ps-map">
+              <div class="ps-pin ps-pin-1"></div>
+              <div class="ps-pin ps-pin-2"></div>
+              <div class="ps-pin ps-pin-3"></div>
+              <div class="ps-pin ps-pin-4"></div>
+              <div class="ps-you">📍 You</div>
+            </div>
+            <!-- Deals -->
+            <div class="ps-deals-label">🔥 Nearby Deals</div>
+            <div class="ps-deal">
+              <div class="ps-deal-icon" style="background:rgba(34,197,94,0.1)">🛒</div>
+              <div class="ps-deal-info">
+                <div class="ps-deal-name">Sharma Kirana Store</div>
+                <div class="ps-deal-sub">Atta 10kg · 0.2km away</div>
+              </div>
+              <span class="ps-badge">15% OFF</span>
+            </div>
+            <div class="ps-deal">
+              <div class="ps-deal-icon" style="background:rgba(99,102,241,0.1)">⚡</div>
+              <div class="ps-deal-info">
+                <div class="ps-deal-name">Tech World Electronics</div>
+                <div class="ps-deal-sub">Earphones · 0.4km away</div>
+              </div>
+              <span class="ps-badge">₹299</span>
+            </div>
+            <div class="ps-deal">
+              <div class="ps-deal-icon" style="background:rgba(239,68,68,0.1)">💊</div>
+              <div class="ps-deal-info">
+                <div class="ps-deal-name">Ganesh Medical</div>
+                <div class="ps-deal-sub">Vitamin C · Expiry Deal</div>
+              </div>
+              <span class="ps-badge">50% OFF</span>
+            </div>
+            <!-- Tabs -->
+            <div class="ps-tabs">
+              <div class="ps-tab-active">
+                <span class="ps-tab-icon">🗺</span>Explore
+              </div>
+              <div><span class="ps-tab-icon">🏷</span>Deals</div>
+              <div><span class="ps-tab-icon">🔍</span>Search</div>
+              <div><span class="ps-tab-icon">👤</span>Profile</div>
+            </div>
+            <div class="ps-home-bar"><span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TICKER ───────────────────────────────── -->
+  <div class="ticker-strip">
+    <div class="ticker-track" aria-hidden="true">
+      <!-- Repeated twice for seamless loop -->
+      <span class="ticker-item">Kirana &amp; Grocery</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Electronics &amp; Gadgets</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Street Food &amp; Vendors</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Stationery &amp; Books</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Clothing &amp; Fashion</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Medical &amp; Pharmacy</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Kirana &amp; Grocery</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Electronics &amp; Gadgets</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Street Food &amp; Vendors</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Stationery &amp; Books</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Clothing &amp; Fashion</span>
+      <span class="ticker-item ticker-sep">●</span>
+      <span class="ticker-item">Medical &amp; Pharmacy</span>
+      <span class="ticker-item ticker-sep">●</span>
+    </div>
+  </div>
+
+  <!-- ─── PROBLEM ──────────────────────────────── -->
+  <section class="problem-section" id="problem">
+    <div class="s-inner">
+      <div class="reveal">
+        <span class="s-label">The Real Problem</span>
+        <h2 class="problem-quote">
+          ₹5 ka saving ke liye, aap
+          <span class="hl">₹50 zyada Blinkit pe de rahe ho.</span>
+        </h2>
+        <p class="problem-desc">
+          The kirana store 1 minute away from your house has the same product, cheaper, fresher —
+          but you'll never know because they don't have an app. Meanwhile, quick commerce apps
+          decide the price, the brand, and the delivery fee. Your neighbourhood shopkeeper loses
+          a customer. You lose a better deal. Nobody wins.
+        </p>
+      </div>
+
+      <div class="prob-cards">
+        <div class="prob-card reveal reveal-d1">
+          <div class="prob-icon">🕵️</div>
+          <h3>Invisible Shops</h3>
+          <p>Your local stores have no online presence. Great deals go unnoticed every single day.</p>
+        </div>
+        <div class="prob-card reveal reveal-d2">
+          <div class="prob-icon">📉</div>
+          <h3>Lost Footfall</h3>
+          <p>Customers default to Blinkit/Zepto because they don't know what's available 200 meters away.</p>
+        </div>
+        <div class="prob-card reveal reveal-d3">
+          <div class="prob-icon">📦</div>
+          <h3>Dead Inventory</h3>
+          <p>Products expire on shelves because shopkeepers have no way to push flash discounts digitally.</p>
+        </div>
+        <div class="prob-card reveal reveal-d4">
+          <div class="prob-icon">🔒</div>
+          <h3>No Price Transparency</h3>
+          <p>You can't compare prices across 5 nearby stores without physically visiting each one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SOLUTION ─────────────────────────────── -->
+  <section id="solution">
+    <div class="s-inner">
+      <div class="solution-grid">
+        <!-- Visual -->
+        <div class="sol-visual reveal">
+          <div class="flow-item">
+            <div class="flow-icon">🗺</div>
+            <div>
+              <div class="flow-title">Shopkeeper lists inventory &amp; discounts</div>
+              <div class="flow-desc">Online. Real-time. Any language.</div>
+            </div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="flow-item">
+            <div class="flow-icon">📱</div>
+            <div>
+              <div class="flow-title">Customer discovers nearby deals</div>
+              <div class="flow-desc">Within 1–5 km radius, on map</div>
+            </div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="flow-item">
+            <div class="flow-icon">🏷</div>
+            <div>
+              <div class="flow-title">Coupon claimed. Walk over. Buy.</div>
+              <div class="flow-desc">Zero delivery fee. Product in hand.</div>
+            </div>
+          </div>
+          <div style="margin-top:2rem;padding:1.2rem;background:rgba(255,102,0,0.06);border:1px solid rgba(255,102,0,0.14);border-radius:10px;font-size:0.82rem;color:var(--w55);line-height:1.65;">
+            No cart. No delivery. No middleman markup. Just local commerce — the way it was meant to be.
+          </div>
+        </div>
+        <!-- Text -->
+        <div class="reveal reveal-d2">
+          <span class="s-label">What is BazaarDeal?</span>
+          <h2 class="s-heading">Online Discovery.<br>Offline Purchase.<br><span style="color:var(--orange)">Zero Delivery Fee.</span></h2>
+          <p class="s-sub">
+            BazaarDeal is a hyperlocal O2O (Online-to-Offline) platform. We make every local shop —
+            kirana, electronics, food vendor, stationery, clothing — digitally visible to customers
+            within a 1–5 km radius.
+          </p>
+          <div class="sol-tags">
+            <span class="sol-tag">Hyperlocal</span>
+            <span class="sol-tag">O2O Commerce</span>
+            <span class="sol-tag">₹0 Delivery</span>
+            <span class="sol-tag">Real-time Inventory</span>
+            <span class="sol-tag">Coupon System</span>
+            <span class="sol-tag">1–5 km Radius</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Second ticker between sections -->
+  <div class="ticker-strip" style="background: var(--bg-3); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="ticker-track" style="animation-direction:reverse;" aria-hidden="true">
+      <span class="ticker-item" style="color:var(--w55)">Browse Online</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Compare Prices</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--orange)">Claim Coupon</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Walk Over</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Buy Offline</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--orange)">Save Real Money</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Browse Online</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Compare Prices</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--orange)">Claim Coupon</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Walk Over</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--w55)">Buy Offline</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+      <span class="ticker-item" style="color:var(--orange)">Save Real Money</span>
+      <span class="ticker-item ticker-sep" style="color:var(--w20)">●</span>
+    </div>
+  </div>
+
+  <!-- ─── HOW IT WORKS ─────────────────────────── -->
+  <section id="how">
+    <div class="s-inner">
+      <!-- Customer side -->
+      <div class="how-group">
+        <div class="reveal">
+          <span class="s-label how-label-customer">For Customers</span>
+          <h2 class="s-heading">3 Steps. 3 Minutes. <span style="color:var(--orange)">Real Savings.</span></h2>
+        </div>
+        <div class="steps-row" id="customerSteps">
+          <div class="step-card reveal reveal-d1">
+            <div class="step-num">1</div>
+            <div class="step-ico">🗺</div>
+            <h3>Open &amp; Discover</h3>
+            <p>See all nearby stores on a map. Browse by category — Kirana, Electronics, Food Courts, Shopping.</p>
+          </div>
+          <div class="step-card reveal reveal-d2">
+            <div class="step-num">2</div>
+            <div class="step-ico">🏷</div>
+            <h3>Compare &amp; Claim</h3>
+            <p>Check prices, discounts, and expiring-soon deals. Claim a coupon with one tap.</p>
+          </div>
+          <div class="step-card reveal reveal-d3">
+            <div class="step-num">3</div>
+            <div class="step-ico">🚶</div>
+            <h3>Visit &amp; Buy</h3>
+            <p>Walk to the store, show your code, get the discount. Product in hand, instantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shopkeeper side -->
+      <div class="how-group" id="shopkeepers">
+        <div class="reveal">
+          <span class="s-label how-label-shop">For Shopkeepers</span>
+          <h2 class="s-heading">Apni Dukaan Ko Digital Banao. <span style="color:var(--orange)">2 Minute Mein.</span></h2>
+        </div>
+        <div class="steps-row" id="shopSteps">
+          <div class="step-card reveal reveal-d1">
+            <div class="step-num">1</div>
+            <div class="step-ico">🏪</div>
+            <h3>Register Your Shop</h3>
+            <p>Add shop name, photo, category, and location. Done in under 2 minutes. Free forever to start.</p>
+          </div>
+          <div class="step-card reveal reveal-d2">
+            <div class="step-num">2</div>
+            <div class="step-ico">🎤</div>
+            <h3>List Products &amp; Deals</h3>
+            <p>Upload items with price, photos, discounts. Use voice input in Hindi or your local language — just speak and it's listed.</p>
+          </div>
+          <div class="step-card reveal reveal-d3">
+            <div class="step-num">3</div>
+            <div class="step-ico">📈</div>
+            <h3>Get Customers</h3>
+            <p>Nearby customers see your deals, claim coupons, walk into your shop. More footfall, more sales.</p>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="voice-callout">
+            🎤 Voice-first — speak in Hindi, Marathi, Tamil, Bengali, Punjabi, Telugu.
+            Illiterate-friendly. No typing needed.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CATEGORIES ───────────────────────────── -->
+  <section class="cat-section" id="categories">
+    <div class="s-inner">
+      <div class="reveal">
+        <span class="s-label">Shop by Category</span>
+        <h2 class="s-heading">Every Shop. Every Category. <span style="color:var(--orange)">Near You.</span></h2>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card reveal reveal-d1">
+          <div class="cat-icon">🛒</div>
+          <div>
+            <div class="cat-name">Kirana &amp; Grocery</div>
+            <div class="cat-status"><em>Open Now</em> · 0.2–1.5km</div>
+          </div>
+        </div>
+        <div class="cat-card reveal reveal-d2">
+          <div class="cat-icon">⚡</div>
+          <div>
+            <div class="cat-name">Electronics &amp; Gadgets</div>
+            <div class="cat-status"><em>Open Now</em> · 0.4–2km</div>
+          </div>
+        </div>
+        <div class="cat-card reveal reveal-d3">
+          <div class="cat-icon">🍜</div>
+          <div>
+            <div class="cat-name">Street Food &amp; Local Vendors</div>
+            <div class="cat-status"><em>Open Now</em> · 0.1–0.8km</div>
+          </div>
+        </div>
+        <div class="cat-card reveal reveal-d1">
+          <div class="cat-icon">📚</div>
+          <div>
+            <div class="cat-name">Stationery &amp; Books</div>
+            <div class="cat-status"><em>Open Now</em> · 0.3–1.2km</div>
+          </div>
+        </div>
+        <div class="cat-card reveal reveal-d2">
+          <div class="cat-icon">👗</div>
+          <div>
+            <div class="cat-name">Clothing &amp; Fashion</div>
+            <div class="cat-status"><em>Open Now</em> · 0.5–2km</div>
+          </div>
+        </div>
+        <div class="cat-card reveal reveal-d3">
+          <div class="cat-icon">💊</div>
+          <div>
+            <div class="cat-name">Medical &amp; Pharmacy</div>
+            <div class="cat-status"><em>Open 24/7</em> · 0.1–1km</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── VALUE PROPS — BENTO ──────────────────── -->
+  <section>
+    <div class="s-inner">
+      <div class="reveal">
+        <span class="s-label">Why BazaarDeal</span>
+        <h2 class="s-heading">Not Another Delivery App.<br><span style="color:var(--orange)">A Local Commerce Revolution.</span></h2>
+      </div>
+      <div class="bento-grid">
+        <div class="bc bc-1 reveal">
+          <div class="bc-tag">Always</div>
+          <div class="bc-big">₹0</div>
+          <h3>Delivery Fee. Always.</h3>
+          <p>Walk 2 minutes. Pick it up. No surge pricing, no minimum order, no platform markup. The price you see is the price you pay.</p>
+          <div class="bc-glow"></div>
+        </div>
+        <div class="bc bc-2 reveal reveal-d2">
+          <div class="bc-icon">📊</div>
+          <h3>Real-Time Prices &amp; Discounts</h3>
+          <p>See exactly what the shop is charging right now. No hidden markups. No algorithm-inflated pricing.</p>
+        </div>
+        <div class="bc bc-3 reveal reveal-d1">
+          <div class="bc-icon">⏰</div>
+          <h3>Expiring Soon Deals</h3>
+          <p>Products near expiry at 50–70% off. Shopkeeper clears stock, you save big. Everyone wins. Flash deals updated in real-time.</p>
+        </div>
+        <div class="bc bc-4 reveal reveal-d2">
+          <div class="bc-tag">Offline Advantage</div>
+          <div class="bc-big" style="font-size:2.5rem; margin-bottom:0.8rem;">Touch Before You Buy</div>
+          <p>No damaged deliveries. No wrong sizes. No substituted brands. See it, feel it, take it home. That's how real commerce works.</p>
+          <div class="bc-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SHOPKEEPER SECTION ───────────────────── -->
+  <section class="sk-section">
+    <div class="s-inner">
+      <div class="sk-grid">
+        <!-- Text side -->
+        <div>
+          <div class="reveal">
+            <span class="s-label">For Shop Owners</span>
+            <h2 class="s-heading">Aapki Dukaan.<br>Aapke Customers.<br><span style="color:var(--orange)">Aapka Control.</span></h2>
+          </div>
+          <div class="sk-features">
+            <div class="sk-feat reveal reveal-d1">
+              <div class="sk-check">✓</div>
+              <div class="sk-feat-text">List unlimited products with images, prices, and discounts — no limits, no extra charges.</div>
+            </div>
+            <div class="sk-feat reveal reveal-d2">
+              <div class="sk-check">✓</div>
+              <div class="sk-feat-text">Voice input in 6+ Indian languages — Hindi, Marathi, Tamil, Bengali, Punjabi, Telugu. No typing needed.</div>
+            </div>
+            <div class="sk-feat reveal reveal-d3">
+              <div class="sk-check">✓</div>
+              <div class="sk-feat-text">Live dashboard showing store views, coupon claims, and footfall data updated in real-time.</div>
+            </div>
+            <div class="sk-feat reveal reveal-d4">
+              <div class="sk-check">✓</div>
+              <div class="sk-feat-text">Flash deal tools to clear dead inventory in hours — not days. One tap to go live.</div>
+            </div>
+          </div>
+          <div class="pricing-box reveal">
+            <div class="pricing-free">First month completely free.</div>
+            <div class="pricing-then">Then just ₹299/month. Less than ₹10 per day. Cancel anytime.</div>
+          </div>
+          <a href="#" class="btn-primary reveal">
+            Register Your Shop Free →
+          </a>
+        </div>
+
+        <!-- Phone mockup side -->
+        <div class="sk-phone-wrap reveal reveal-d2">
+          <div class="sk-phone">
+            <div class="sk-screen">
+              <div class="sk-app-header">
+                <div class="sk-app-title">My Shop Dashboard</div>
+                <div class="sk-app-sub">Sharma Kirana Store · Live 🟢</div>
+              </div>
+              <div class="sk-stats-g">
+                <div class="sk-stat-box">
+                  <div class="sk-stat-v">247</div>
+                  <div class="sk-stat-l">Store Views Today</div>
+                </div>
+                <div class="sk-stat-box">
+                  <div class="sk-stat-v">38</div>
+                  <div class="sk-stat-l">Coupons Claimed</div>
+                </div>
+                <div class="sk-stat-box">
+                  <div class="sk-stat-v">₹12.4K</div>
+                  <div class="sk-stat-l">Revenue Today</div>
+                </div>
+                <div class="sk-stat-box">
+                  <div class="sk-stat-v">89</div>
+                  <div class="sk-stat-l">Footfall Count</div>
+                </div>
+              </div>
+              <div class="sk-sec-title">Active Deals</div>
+              <div class="sk-prod">
+                <span class="sk-prod-ico">🌾</span>
+                <div>
+                  <div class="sk-prod-name">Aashirvaad Atta 10kg</div>
+                  <div class="sk-prod-price">₹380</div>
+                </div>
+                <div class="sk-prod-disc">15% OFF</div>
+              </div>
+              <div class="sk-prod">
+                <span class="sk-prod-ico">🥛</span>
+                <div>
+                  <div class="sk-prod-name">Amul Full Cream Milk</div>
+                  <div class="sk-prod-price">₹60/L</div>
+                </div>
+                <div class="sk-prod-disc">FRESH</div>
+              </div>
+              <div class="sk-prod">
+                <span class="sk-prod-ico">🍫</span>
+                <div>
+                  <div class="sk-prod-name">Cadbury 5-Star Combo</div>
+                  <div class="sk-prod-price">₹45</div>
+                </div>
+                <div class="sk-prod-disc">⏰ 2hr</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS / NUMBERS ──────────────────────── -->
+  <section>
+    <div class="s-inner">
+      <div class="reveal" style="text-align:center; margin-bottom:0;">
+        <span class="s-label" style="justify-content:center;">Built for Bharat</span>
+        <h2 class="s-heading" style="text-align:center;">
+          Built for Bharat. <span style="color:var(--orange)">Backed by Numbers.</span>
+        </h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box reveal reveal-d1">
+          <div class="stat-num" data-target="2300" data-suffix="+">0</div>
+          <div class="stat-lbl">Local Shops Onboarding</div>
+        </div>
+        <div class="stat-box reveal reveal-d2">
+          <div class="stat-num" data-target="34000" data-suffix="+">0</div>
+          <div class="stat-lbl">App Downloads Target (6 months)</div>
+        </div>
+        <div class="stat-box reveal reveal-d3">
+          <div class="stat-num" data-target="6" data-suffix="">0</div>
+          <div class="stat-lbl">Indian Languages Supported</div>
+        </div>
+        <div class="stat-box reveal reveal-d4">
+          <div class="stat-num" data-prefix="₹" data-target="0" data-suffix="">₹0</div>
+          <div class="stat-lbl">Delivery Charges. Always.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MARKET OPPORTUNITY ───────────────────── -->
+  <section class="market-section">
+    <div class="s-inner">
+      <div class="market-center">
+        <div class="reveal">
+          <span class="s-label" style="justify-content:center;">Market Opportunity</span>
+        </div>
+        <div class="market-num reveal">$800B+</div>
+        <p class="market-desc reveal">
+          India's offline retail is an <strong style="color:#fff">$800B+ market</strong> and
+          <strong style="color:#fff">85% of purchases</strong> still happen at local stores.
+          BazaarDeal is the bridge between digital discovery and offline buying.
+          We're not disrupting local commerce — we're supercharging it.
+        </p>
+        <div class="market-row">
+          <div class="market-stat reveal reveal-d1">
+            <div class="market-stat-v">$800B+</div>
+            <div class="market-stat-l">India Offline Retail TAM</div>
+          </div>
+          <div class="market-stat reveal reveal-d2">
+            <div class="market-stat-v">85%</div>
+            <div class="market-stat-l">Purchases still offline</div>
+          </div>
+          <div class="market-stat reveal reveal-d3">
+            <div class="market-stat-v">63M+</div>
+            <div class="market-stat-l">Undigitised SME shops</div>
+          </div>
+          <div class="market-stat reveal reveal-d4">
+            <div class="market-stat-v">1.4B</div>
+            <div class="market-stat-l">Potential customers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FINAL CTA ─────────────────────────────── -->
+  <section class="cta-section">
+    <div class="cta-orb"></div>
+    <div class="s-inner cta-inner">
+      <div class="reveal">
+        <h2 class="cta-heading">Apna Bazaar. Apna Deal.</h2>
+        <p class="cta-sub">Your neighbourhood is full of great deals. You just haven't found them yet.</p>
+      </div>
+      <div class="cta-cards">
+        <div class="cta-card reveal reveal-d1">
+          <div class="cta-card-tag">📱 For Customers</div>
+          <h3>Download BazaarDeal</h3>
+          <p>Find the best deals within walking distance. Real prices. Real shops. No delivery wait.</p>
+          <div style="display:flex; gap:0.7rem; flex-wrap:wrap;">
+            <a href="#" class="btn-glow">▶ Google Play</a>
+            <a href="#" class="btn-glow"> App Store</a>
+          </div>
+        </div>
+        <div class="cta-card reveal reveal-d2">
+          <div class="cta-card-tag">🏪 For Shopkeepers</div>
+          <h3>Register Your Shop</h3>
+          <p>Get customers without paying for ads. List your products. First month completely free.</p>
+          <a href="#" class="btn-ghost">Register Free →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Bazaar<em>Deal</em></div>
+        <div class="footer-tagline">Your Neighbourhood Stores. Now on Your Phone.</div>
+      </div>
+      <nav class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+        <a href="#">Investors</a>
+      </nav>
+      <div class="footer-copy">© 2026 BazaarDeal. Made with ❤️ for Bharat.</div>
+    </div>
+  </footer>
+
+  <!-- ─── JAVASCRIPT ────────────────────────────── -->
+  <script>
+    /* ── Custom cursor ── */
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function animCursor() {
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '28px'; cursor.style.height = '28px';
+        cursorRing.style.width = '56px'; cursorRing.style.height = '56px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '16px'; cursor.style.height = '16px';
+        cursorRing.style.width = '38px'; cursorRing.style.height = '38px';
+      });
+    });
+
+    /* ── Navbar scroll ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    /* ── Mobile menu ── */
+    const mobileMenu = document.getElementById('mobileMenu');
+    document.getElementById('hamburger').addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+    });
+    document.getElementById('mobileClose').addEventListener('click', closeMobile);
+    function closeMobile() { mobileMenu.classList.remove('open'); }
+
+    /* ── Hero headline — word-by-word ── */
+    (function() {
+      const h = document.getElementById('heroHeadline');
+      // Preserve the accent span
+      const raw = h.innerHTML;
+      // We need to split text nodes while preserving spans
+      // Simpler approach: split on spaces, wrap each in .word
+      const text = h.textContent;
+      const words = text.split(' ');
+      // Rebuild preserving accent
+      const accentWord = 'Your Neighbourhood Stores.';
+      let delay = 0.35;
+      let html = '';
+      words.forEach((w, i) => {
+        if (!w.trim()) return;
+        const isAccent = i >= words.length - 4; // last 4 words "Now on Your Phone."
+        html += `<span class="word${isAccent ? ' accent' : ''}" style="animation-delay:${delay}s">${w}</span> `;
+        delay += 0.08;
+      });
+      h.innerHTML = html;
+    })();
+
+    /* ── Phone 3D tilt ── */
+    const heroPhone = document.getElementById('heroPhone');
+    if (heroPhone) {
+      document.addEventListener('mousemove', e => {
+        const rect = heroPhone.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / window.innerWidth;
+        const dy = (e.clientY - cy) / window.innerHeight;
+        const rotY =  dx * 18;
+        const rotX = -dy * 12;
+        heroPhone.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      });
+      document.addEventListener('mouseleave', () => {
+        heroPhone.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    }
+
+    /* ── Intersection Observer for scroll reveals ── */
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Activate step cards
+          if (entry.target.classList.contains('step-card')) {
+            entry.target.classList.add('active');
+          }
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    document.querySelectorAll('.step-card').forEach(el => revealObs.observe(el));
+
+    /* ── Animated counters ── */
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const prefix = el.dataset.prefix || '';
+      if (isNaN(target) || target === 0) return; // ₹0 is already set
+      const duration = 1800;
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out quad
+        const eased = 1 - (1 - progress) * (1 - progress);
+        const current = Math.round(eased * target);
+        el.textContent = prefix + current.toLocaleString('en-IN') + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-num[data-target]').forEach(el => {
+      counterObs.observe(el);
+    });
+
+    /* ── Step timeline line progress ── */
+    function updateStepProgress(container) {
+      const cards = container.querySelectorAll('.step-card');
+      let activeCount = 0;
+      cards.forEach(c => { if (c.classList.contains('active')) activeCount++; });
+      const pct = activeCount === 0 ? 0 : ((activeCount - 0.5) / cards.length) * 100;
+      container.style.setProperty('--lp', pct + '%');
+    }
+
+    const stepObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          const parent = entry.target.closest('.steps-row');
+          if (parent) updateStepProgress(parent);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.step-card').forEach(el => stepObs.observe(el));
+
+    /* ── Smooth scroll for nav links ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
